@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import { inject } from '@vercel/analytics';
+inject();
 
 const T = {
   bg:"#f5f5f7", bgDark:"#1d1d1f", bgCard:"#ffffff", bgCardHov:"#f0f0f2",

@@ -58,7 +58,7 @@ const store = {
 };
 
 // ── Landing Page ──────────────────────────────────────────────────────────────
-function LandingPage({ onEnter }) {
+function LandingPage({ onEnter, user, onLogin, onLogout, onWatchlist, wlCount }) {
   const [vis, setVis] = useState(false);
   useEffect(() => { setTimeout(() => setVis(true), 80); }, []);
 
@@ -101,11 +101,23 @@ function LandingPage({ onEnter }) {
           </div>
           <span style={{ fontFamily:"Georgia,serif", fontSize:"17px" }}>EkSoch<span style={{ color:T.accent }}>.AI</span></span>
         </div>
-        <button onClick={onEnter} style={{ display:"flex", alignItems:"center", gap:"8px",
-          background:T.white, color:T.text, border:"none", borderRadius:"100px",
-          padding:"8px 20px", fontSize:"13px", fontWeight:"600", cursor:"pointer" }}>
-          Browse Talks <IArrow/>
-        </button>
+        <div style={{ display:"flex", alignItems:"center", gap:"10px" }}>
+          {user ? (
+            <UserMenu user={user} onLogout={onLogout} onWatchlist={onWatchlist} wlCount={wlCount}/>
+          ) : (
+            <button onClick={onLogin} style={{ display:"flex", alignItems:"center", gap:"7px",
+              background:"rgba(255,255,255,0.1)", color:T.white,
+              border:"1px solid rgba(255,255,255,0.2)", borderRadius:"100px",
+              padding:"7px 16px", fontSize:"13px", fontWeight:"500", cursor:"pointer" }}>
+              <IUser/> Sign In
+            </button>
+          )}
+          <button onClick={onEnter} style={{ display:"flex", alignItems:"center", gap:"8px",
+            background:T.white, color:T.text, border:"none", borderRadius:"100px",
+            padding:"8px 20px", fontSize:"13px", fontWeight:"600", cursor:"pointer" }}>
+            Browse Talks <IArrow/>
+          </button>
+        </div>
       </nav>
 
       {/* Hero */}
@@ -391,7 +403,12 @@ export default function App() {
   const getRow=id=>filtered.filter(i=>i.category.includes(id));
   const isDefault=cat==="all";
 
-  if(page==="landing") return <LandingPage onEnter={()=>setPage("library")}/>;
+  if(page==="landing") return (
+    <>
+      <LandingPage onEnter={()=>setPage("library")} user={user} onLogin={()=>setShowAuth(true)} onLogout={handleLogout} onWatchlist={()=>{ setPage("library"); setShowWL(true); }} wlCount={watchlist.length}/>
+      {showAuth && <AuthModal onLogin={handleLogin} onClose={()=>setShowAuth(false)}/>}
+    </>
+  );
 
   return(
     <div style={{minHeight:"100vh",background:T.bg,fontFamily:"system-ui,sans-serif"}}>
